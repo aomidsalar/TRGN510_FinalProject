@@ -9,6 +9,7 @@ This project will go through a pipeline for analyzing exome sequencing data. The
 * Abnormal MRI with reduced white matter
 * Tethered spinal cord
 * Normal growth, normal spine, above average height
+
 Starting with exome FASTQ files for the child, mother, and father, this pipeline will index and align the files; mark duplicates; call variants, individually and jointly; annotate variants; and finally develop a python script that will filter based on options given, giving a final output of a tab-delimited file containing the filtered results.
 ## Data
 The data for this project includes FASTQ files for the child of interest, father, and mother. This was obtained through the /scratch/trio/ directory in the TRGN server.
