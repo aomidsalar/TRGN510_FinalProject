@@ -33,7 +33,7 @@ The final product will be a combination of command line scripts through the TRGN
 * I then renamed `hr38.fa` as `hg38bwaidx.fa` so all index files have the same name
 * The paired reads were aligned to the reference genome using BWA. Sample usage: `bwa mem -M -t 4 hg38bwaidx /scratch/trio/C4RCD_F380_C1_1_1339313_genedx_L001_R1_001.fastq.gz /scratch/trio/C4RCD_F380_C1_1_1339313_genedx_L001_R2_001.fastq.gz > C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sam`
 * Three sam files were produced from the previous step, and these were then converted to bam files
-* These files were then sorted this step might not be necessary if reproduced since sorting occurs again later
+* These files were then sorted
 * A read group was added to each file, which is needed for GATK analysis.
 * These files were then indexed (it may be possible for this step to be skipped if reproduced, since indexing was done again)
 ### Mark Duplicates using Picard
