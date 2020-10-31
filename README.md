@@ -28,17 +28,32 @@ The second milestone consists of building a python script which will filter resu
 The final product will be a combination of command line scripts through the TRGN server as well as Python scripts from the Jupyter notebook.
 ## Steps Taken to Reach Milestone 1
 ### Alignment and indexing of FASTQ data with BWA
-* The reference file was obtained using the following command: `wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz`
-* The file was unzipped and indexed using BWA: `bwa index -p hg38bwaidx -a bwtsw hg38.fa`
+* The reference file was obtained using the following command:
+
+ `wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz`
+* The file was unzipped and indexed using BWA: 
+
+`bwa index -p hg38bwaidx -a bwtsw hg38.fa`
 * I then renamed `hr38.fa` as `hg38bwaidx.fa` so all index files have the same name
-* The paired reads were aligned to the reference genome using BWA. Sample usage: `bwa mem -M -t 4 hg38bwaidx /scratch/trio/C4RCD_F380_C1_1_1339313_genedx_L001_R1_001.fastq.gz /scratch/trio/C4RCD_F380_C1_1_1339313_genedx_L001_R2_001.fastq.gz > C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sam`
+* The paired reads were aligned to the reference genome using BWA.
+
+ Sample usage: `bwa mem -M -t 4 hg38bwaidx /scratch/trio/C4RCD_F380_C1_1_1339313_genedx_L001_R1_001.fastq.gz /scratch/trio/C4RCD_F380_C1_1_1339313_genedx_L001_R2_001.fastq.gz > C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sam`
 * Three sam files were produced from the previous step, and these were then converted to bam files
 * These files were then sorted
 * A read group was added to each file, which is needed for GATK analysis.
-* These files were then indexed (it may be possible for this step to be skipped if reproduced, since indexing was done again)
+* These files were then indexed \(it may be possible for this step to be skipped if reproduced, since indexing was done again\)
 ### Mark Duplicates using Picard
-* The MarkDuplicates option of Picard was used for this step. Example usage: `java -jar picard/build/libs/picard.jar MarkDuplicates -I C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.rg.bam -O C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.deduped.bam -M C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.deduped.txt`
+* The MarkDuplicates option of Picard was used for this step. Example usage: 
+
+`java -jar picard/build/libs/picard.jar MarkDuplicates -I C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.rg.bam -O C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.deduped.bam -M C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.deduped.txt`
 ### Call Variants Using GATK
 * Each bam file outputted from the previous step was indexed prior to variant calling.
 * Variants were called individually for the three bam files, as well as jointly.
-    * Example usage for individual variant calling: `java -jar $GATK HaplotypeCaller -R hg38bwaidx.fa -I C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.deduped.bam -O C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.deduped.indivcall.vcf` 
+    * Example usage for individual variant calling: 
+
+`java -jar $GATK HaplotypeCaller -R hg38bwaidx.fa -I C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.deduped.bam -O C4RCD_F380D_C1_1_1339313_genedx_L001_sequence12_pe.sorted.deduped.indivcall.vcf` 
+### Annotating Variants with SnpEff
+* SnpEff was used to annotate variants from the vcf files generated in the previous step. The reference genome used for SnpEff was the most recent version available to download on the software, GRCh38.99.
+    * Example using for variant annotating:
+
+`java -Xmx4G -jar snpEff/snpEff.jar -classic -c snpEff/snpEff.config GRCh38.99 3samples_jointcall.vcf > 3samples_jointcall.snpEff.vcf`
