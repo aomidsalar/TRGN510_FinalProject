@@ -57,3 +57,7 @@ The final product will be a combination of command line scripts through the TRGN
     * Example using for variant annotating:
 
 `java -Xmx4G -jar snpEff/snpEff.jar -classic -c snpEff/snpEff.config GRCh38.99 3samples_jointcall.vcf > 3samples_jointcall.snpEff.vcf`
+### Milestone 1 Deliverables
+* The deliverables for Milestone 1 consist of the annotated vcf files. These can be found on the trgn server at the path listed below, and end with `.snpEff.vcf`
+
+`/scratch/aomidsal/TRGN510/FinalProject/`
