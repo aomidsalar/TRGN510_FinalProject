@@ -1,3 +1,4 @@
+%%file mutationcalling.py
 #!/usr/bin/python
 import sys
 from optparse import OptionParser
@@ -18,27 +19,34 @@ quality=options.quality
 denovo=options.denovo
 vcfinput=options.filename
 
-vcf = pd.read_csv(vcfinput, comment='#', sep='\t', header=0)
+def read_comments(csv_file):
+    for row in csv_file:
+        if row[0] == '#':
+            yield row.split('#')[1].strip()
+
+def get_last_commented_line(filename):
+    with open(filename, 'r', newline='') as f:
+        decommented_lines = [line for line in csv.reader(read_comments(f))]
+        header = decommented_lines[-1]
+        header=header[0].split("\t")
+        skiprows = len(decommented_lines)
+        return header, skiprows
+
+header, skiprows = get_last_commented_line(vcfinput)
+vcf=pd.read_csv(vcfinput, sep="\t", names=header, skiprows=skiprows)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.max_columns', None)
 pd.set_option('expand_frame_repr', False)
 if impact:
     if impact=="HIGH":
-        filtered_highimpact=vcf[vcf.iloc[:,7].astype(str).str.contains('HIGH')]
-        print(filtered_highimpact)
+        vcf=vcf[vcf.iloc[:,7].astype(str).str.contains('HIGH')]
     if impact=="MODERATE":
-        filtered_moderateimpact=vcf[vcf.iloc[:,7].astype(str).str.contains('MODERATE')]
-        print(filtered_moderateimpact)
+        vcf=vcf[vcf.iloc[:,7].astype(str).str.contains('MODERATE')]
     if impact=="LOW":
-        filtered_lowimpact=vcf[vcf.iloc[:,7].astype(str).str.contains('LOW')]
-        print(filtered_lowimpact)
-    else:
-        print("Invalid impact")
+        vcf=vcf[vcf.iloc[:,7].astype(str).str.contains('LOW')]
 if quality:
     qualityscore=int(quality)
-    filtered_quality = vcf[vcf.iloc[:,5].ge(qualityscore)]
-    print(filtered_quality)
+    vcf = vcf[vcf.iloc[:,5].ge(qualityscore)]
 if denovo==True:
-    denovo_rows=vcf[vcf.iloc[:,9].astype(str).str.contains('0/1' or '1/1') & vcf.iloc[:,10].astype(str).str.contains('0/0') & vcf.iloc[:,11].astype(str).str.contains('0/0')]
-    print(denovo_rows)
-        
+    vcf=vcf[vcf.iloc[:,9].astype(str).str.contains('0/1' or '1/1') & vcf.iloc[:,10].astype(str).str.contains('0/0') & vcf.iloc[:,11].astype(str).str.contains('0/0')]
+vcf.to_csv(sys.stdout, sep="\t", quoting=csv.QUOTE_NONE, index=False)
