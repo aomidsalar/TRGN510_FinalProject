@@ -87,7 +87,7 @@ All of the filtering was done using pandas and regular expressions. Filtering va
 The input file used was the vcf file generated in the previous step `canon.3samples_jointcall.snpEff.vcf.txt`. A `.txt ` was added to the end of the file during the process of transferring the file from the TRGN server onto JupyterLab in order to avoid issues with the computer recognizing the file as a contact list.
 ### Usage
 This python script, `mutationcalling.py`, has 4 options:
-* An input file has to be given, using the option `-f` or `--f` followed by the file name
+* An input file has to be given, using the option `-f` or `--file` followed by the file name
 * The option `--denovo` will filter for denovo variants, those where the individual in column 10 is heterozygous or homozygous for the alternate allele, while the individuals in columns 11 and 12 are homozygous for the reference allele. 
 * The option `--impact=` can be used to filter by impact of LOW, MODERATE, or HIGH.
 * The option `--quality` followed by an integer can be used to filter for variants greater than or equal to the quality score value you entered.
